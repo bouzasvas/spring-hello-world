@@ -11,5 +11,5 @@ FROM openjdk:11 AS RUN
 # ARG APPLICATION_NAME=spring-boot-mvn
 WORKDIR /opt/spring-boot-mvn
 
-COPY --from=MVN_BUILD /opt/spring-boot-mvn/src/target/*.jar target/app.jar
-CMD ["java", "-jar", "target/app.jar"]
+COPY --from=MVN_BUILD /opt/spring-boot-mvn/src/target/*.jar target/
+CMD ["java", "-jar", "target/spring-hello-world-0.0.1-SNAPSHOT.jar"]
