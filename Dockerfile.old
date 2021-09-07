@@ -1,0 +1,35 @@
+FROM openjdk:11
+
+ARG M2_HOME=/usr/maven
+
+WORKDIR ${M2_HOME}
+
+#Download M2
+ARG M2_VERSION=3.8.1
+ARG M2_BIN_FILENAME="m2.tar.gz"
+
+RUN curl -o ${M2_BIN_FILENAME} https://ftp.cc.uoc.gr/mirrors/apache/maven/maven-3/${M2_VERSION}/binaries/apache-maven-${M2_VERSION}-bin.tar.gz
+
+# Extract Contents
+RUN tar -xf ${M2_BIN_FILENAME}
+# Delete Compressed File
+RUN rm ${M2_BIN_FILENAME}
+
+# Create M2 Environment Variables
+ENV MAVEN_HOME ${M2_HOME}/apache-maven-${M2_VERSION}
+ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
+RUN ln -s ${M2_HOME}/apache-maven-${M2_VERSION}/bin/mvn /usr/bin/mvn
+
+# Build App
+WORKDIR /tmp/app
+
+COPY . /tmp/app
+RUN ["mvn", "clean", "install"]
+
+#COPY target/*.jar /tmp/app/myapp.jar
+
+EXPOSE 8080:8080
+
+#VOLUME $USER_HOME_DIR/.m2
+
+CMD ["java", "-jar", "target/spring-hello-world-0.0.1-SNAPSHOT.jar"]
